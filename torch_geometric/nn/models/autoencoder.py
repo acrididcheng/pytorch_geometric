@@ -10,6 +10,24 @@ from ..inits import reset
 EPS = 1e-15
 
 
+def negative_sampling(pos_edge_index, num_nodes):
+    idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
+    idx = idx.to(torch.device('cpu'))
+
+    rng = range(num_nodes**2)
+    perm = torch.tensor(random.sample(rng, idx.size(0)))
+    mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
+    rest = mask.nonzero().view(-1)
+    while rest.numel() > 0:  # pragma: no cover
+        tmp = torch.tensor(random.sample(rng, rest.size(0)))
+        mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
+        perm[rest] = tmp
+        rest = mask.nonzero().view(-1)
+
+    row, col = perm / num_nodes, perm % num_nodes
+    return torch.stack([row, col], dim=0).to(pos_edge_index.device)
+
+
 class GAE(torch.nn.Module):
     r"""The Graph Auto-Encoder model from the
     `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
@@ -116,23 +134,6 @@ class GAE(torch.nn.Module):
 
         return data
 
-    def negative_sampling(self, pos_edge_index, num_nodes):
-        idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
-        idx = idx.to(torch.device('cpu'))
-
-        rng = range(num_nodes**2)
-        perm = torch.tensor(random.sample(rng, idx.size(0)))
-        mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
-        rest = mask.nonzero().view(-1)
-        while rest.numel() > 0:
-            tmp = torch.tensor(random.sample(rng, rest.size(0)))
-            mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
-            perm[rest] = tmp
-            rest = mask.nonzero().view(-1)
-
-        row, col = perm / num_nodes, perm % num_nodes
-        return torch.stack([row, col], dim=0).to(pos_edge_index.device)
-
     def recon_loss(self, z, pos_edge_index):
         r"""Given latent variables :obj:`z`, computes the binary cross
         entropy loss for positive edges :obj:`pos_edge_index` and negative
@@ -146,7 +147,7 @@ class GAE(torch.nn.Module):
         pos_loss = -torch.log(self.decode_indices(z, pos_edge_index) +
                               EPS).mean()
 
-        neg_edge_index = self.negative_sampling(pos_edge_index, z.size(0))
+        neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
         neg_loss = -torch.log(1 - self.decode_indices(z, neg_edge_index) +
                               EPS).mean()
 
@@ -179,6 +180,15 @@ class GAE(torch.nn.Module):
 
 
 class VGAE(GAE):
+    r"""The Variational Graph Auto-Encoder model from the
+    `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
+    paper.
+
+    Args:
+        encoder (Module): The encoder module to compute :math:`\mu` and
+            :math:`\log \sigma^2`.
+    """
+
     def __init__(self, encoder):
         super(VGAE, self).__init__(encoder)
 
@@ -189,11 +199,21 @@ class VGAE(GAE):
             return mu
 
     def encode(self, *args, **kwargs):
+        r""""""
         self.mu, self.logvar = self.encoder(*args, **kwargs)
         z = self.reparametrize(self.mu, self.logvar)
         return z
 
     def kl_loss(self, mu=None, logvar=None):
+        r"""Computes the KL loss, either for the passed arguments :obj:`mu`
+        and :obj:`logvar`, or based on latent variables from last encoding.
+
+        Args:
+            mu (Tensor, optional): The latent space for :math:`\mu`.
+                (default: :obj:`None`)
+            logvar (Tensor, optional): The latent space for
+                :math:`\log\sigma^2`. (default: :obj:`None`)
+        """
         mu = self.mu if mu is None else mu
         logvar = self.logvar if logvar is None else logvar
         return -0.5 * torch.mean(
@@ -201,20 +221,40 @@ class VGAE(GAE):
 
 
 class ARGA(GAE):
+    r"""The Adversarially Regularized Graph Auto-Encoder model from the
+    `"Adversarially Regularized Graph Autoencoder for Graph Embedding"
+    <https://arxiv.org/abs/1802.04407>`_ paper.
+    paper.
+
+    Args:
+        encoder (Module): The encoder module.
+        discriminator (Module): The discriminator module.
+    """
+
     def __init__(self, encoder, discriminator):
         super(ARGA, self).__init__(encoder)
         self.discriminator = discriminator
 
     def reset_parameters(self):
-        super(ARGA, self).reset_parameters(self)
+        super(ARGA, self).reset_parameters()
         reset(self.discriminator)
 
     def reg_loss(self, z):
+        r"""Computes the regularization loss of the encoder.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+        """
         real = torch.sigmoid(self.discriminator(z))
         real_loss = -torch.log(real + EPS).mean()
         return real_loss
 
     def discriminator_loss(self, z):
+        r"""Computes the loss of the discriminator.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+        """
         real = torch.sigmoid(self.discriminator(torch.randn_like(z)))
         fake = torch.sigmoid(self.discriminator(z.detach()))
         real_loss = -torch.log(real + EPS).mean()
@@ -223,14 +263,34 @@ class ARGA(GAE):
 
 
 class ARGVA(ARGA):
+    r"""The Adversarially Regularized Variational Graph Auto-Encoder model from
+    the `"Adversarially Regularized Graph Autoencoder for Graph Embedding"
+    <https://arxiv.org/abs/1802.04407>`_ paper.
+    paper.
+
+    Args:
+        encoder (Module): The encoder module to compute :math:`\mu` and
+            :math:`\log \sigma^2`.
+        discriminator (Module): The discriminator module.
+    """
+
     def __init__(self, encoder, discriminator):
         super(ARGVA, self).__init__(encoder, discriminator)
         self.VGAE = VGAE(encoder)
+
+    @property
+    def mu(self):
+        return self.VGAE.mu
+
+    @property
+    def logvar(self):
+        return self.VGAE.logvar
 
     def reparametrize(self, mu, logvar):
         return self.VGAE.reparametrize(mu, logvar)
 
     def encode(self, *args, **kwargs):
+        r""""""
         return self.VGAE.encode(*args, **kwargs)
 
     def kl_loss(self, mu=None, logvar=None):

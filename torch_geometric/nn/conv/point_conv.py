@@ -41,14 +41,20 @@ class PointConv(MessagePassing):
         reset(self.global_nn)
 
     def forward(self, x, pos, edge_index):
-        """"""
-        N, M = edge_index[0].max().item() + 1, edge_index[1].max().item() + 1
-        return self.propagate(edge_index, size=(N, M), x=x, pos=pos)
+        r"""
+        Args:
+            x (Tensor): The node feature matrix Can be set to :obj:`None`.
+            pos (Tensor or tuple): The node position matrix. Either given as
+                tensor for use in general message passing or as tuple for use
+                in message passing in bipartite graphs.
+            edge_index (LongTensor): The edge indices.
+        """
+        return self.propagate(edge_index, x=x, pos=pos)
 
-    def message(self, x_i, pos_i, pos_j):
-        msg = pos_i - pos_j
-        if x_i is not None:
-            msg = torch.cat([x_i, msg], dim=1)
+    def message(self, x_j, pos_j, pos_i):
+        msg = pos_j - pos_i
+        if x_j is not None:
+            msg = torch.cat([x_j, msg], dim=1)
         if self.local_nn is not None:
             msg = self.local_nn(msg)
         return msg
