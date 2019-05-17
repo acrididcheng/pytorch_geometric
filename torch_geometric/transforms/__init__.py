@@ -5,6 +5,7 @@ from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
 from .polar import Polar
 from .spherical import Spherical
+from .point_pair_features import PointPairFeatures
 from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
@@ -26,6 +27,7 @@ from .sample_points import SamplePoints
 from .to_dense import ToDense
 from .two_hop import TwoHop
 from .line_graph import LineGraph
+from .generate_mesh_normals import GenerateMeshNormals
 
 __all__ = [
     'Compose',
@@ -35,6 +37,7 @@ __all__ = [
     'LocalCartesian',
     'Polar',
     'Spherical',
+    'PointPairFeatures',
     'OneHotDegree',
     'TargetIndegree',
     'LocalDegreeProfile',
@@ -56,4 +59,5 @@ __all__ = [
     'ToDense',
     'TwoHop',
     'LineGraph',
+    'GenerateMeshNormals',
 ]

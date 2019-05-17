@@ -52,6 +52,7 @@ def test_data():
 
     assert data.num_nodes == 3
     assert data.num_edges == 4
+    assert data.num_faces is None
     assert data.num_features == 2
 
     data.x = None
@@ -60,3 +61,15 @@ def test_data():
     data.edge_index = None
     assert data.num_nodes is None
     assert data.num_edges is None
+
+    data.num_nodes = 4
+    assert data.num_nodes == 4
+
+    data = Data(x=x, attribute=x)
+    assert len(data) == 2
+    assert data.x.tolist() == x.tolist()
+    assert data.attribute.tolist() == x.tolist()
+
+    face = torch.tensor([[0, 1], [1, 2], [2, 3]])
+    data = Data(face=face)
+    assert data.num_faces == 2

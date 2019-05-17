@@ -12,7 +12,7 @@ class GATConv(MessagePassing):
     <https://arxiv.org/abs/1710.10903>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{j} +
+        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
         \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
@@ -34,7 +34,8 @@ class GATConv(MessagePassing):
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the multi-head
-        attentions are averaged instead of concatenated. (default: :obj:`True`)
+            attentions are averaged instead of concatenated.
+            (default: :obj:`True`)
         negative_slope (float, optional): LeakyReLU angle of the negative
             slope. (default: :obj:`0.2`)
         dropout (float, optional): Dropout probability of the normalized
@@ -61,8 +62,8 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
@@ -82,16 +83,16 @@ class GATConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
         return self.propagate(edge_index, x=x, num_nodes=x.size(0))
 
-    def message(self, x_i, x_j, edge_index, num_nodes):
+    def message(self, edge_index_i, x_i, x_j, num_nodes):
         # Compute attention coefficients.
         alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, edge_index[0], num_nodes)
+        alpha = softmax(alpha, edge_index_i, num_nodes)
 
         # Sample attention coefficients stochastically.
         if self.training and self.dropout > 0:

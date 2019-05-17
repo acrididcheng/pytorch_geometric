@@ -1,5 +1,6 @@
 import torch
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import reset
 
@@ -13,8 +14,8 @@ class PointConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
-        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j \,
-        \Vert \, \mathbf{p}_j - \mathbf{p}_i) \right),
+        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j,
+        \mathbf{p}_j - \mathbf{p}_i) \right),
 
     where :math:`\gamma_{\mathbf{\Theta}}` and
     :math:`h_{\mathbf{\Theta}}` denote neural
@@ -43,15 +44,19 @@ class PointConv(MessagePassing):
     def forward(self, x, pos, edge_index):
         r"""
         Args:
-            x (Tensor): The node feature matrix Can be set to :obj:`None`.
+            x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
             pos (Tensor or tuple): The node position matrix. Either given as
                 tensor for use in general message passing or as tuple for use
                 in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
+        if torch.is_tensor(pos):  # Add self-loops for symmetric adjacencies.
+            edge_index, _ = remove_self_loops(edge_index)
+            edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
+
         return self.propagate(edge_index, x=x, pos=pos)
 
-    def message(self, x_j, pos_j, pos_i):
+    def message(self, x_j, pos_i, pos_j):
         msg = pos_j - pos_i
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)
@@ -65,5 +70,6 @@ class PointConv(MessagePassing):
         return aggr_out
 
     def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(
-            self.__class__.__name__, self.local_nn, self.global_nn)
+        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
+                                                      self.local_nn,
+                                                      self.global_nn)

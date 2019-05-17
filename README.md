@@ -58,7 +58,7 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <th>Epochs</th>
       <th>Model</th>
       <th>DGL-DB</th>
-      <th>DGL-SPMV</th>
+      <th>DGL-GS</th>
       <th>PyG</th>
     </tr>
   </thead>
@@ -119,7 +119,7 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <td colspan="6"><b>DGL-DB:</b> DGL 0.2 with <i>Degree Bucketing</i>.</td>
     </tr>
     <tr>
-      <td colspan="6"><b>DGL-SPMV:</b> DGL 0.2 with <i>SPMV optimization</i> inspired by PyG.</td>
+      <td colspan="6"><b>DGL-GS:</b> DGL 0.2 with <i>gather and scatter optimizations</i> inspired by PyG.</td>
     </tr>
     <tr>
       <td colspan="6">Training runtimes obtained on a NVIDIA GTX 1080Ti.</td>
@@ -150,7 +150,9 @@ In detail, the following methods are currently implemented:
 * **[EdgeConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.EdgeConv)** from Wang *et al.*: [Dynamic Graph CNN for Learning on Point Clouds](https://arxiv.org/abs/1801.07829) (CoRR, 2018)
 * **[PointConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.PointConv)** (including **[Iterative Farthest Point Sampling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.fps)**, dynamic graph generation based on **[nearest neighbor](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.knn_graph)** or **[maximum distance](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.radius_graph)**, and **[k-NN interpolation](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.unpool.knn_interpolate)**) from Qi *et al.*: [PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation](https://arxiv.org/abs/1612.00593) (CVPR 2017) and [PointNet++: Deep Hierarchical Feature Learning on Point Sets in a Metric Space](https://arxiv.org/abs/1706.02413) (NIPS 2017)
 * **[XConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.XConv)** from Li *et al.*: [PointCNN: Convolution On X-Transformed Points](https://arxiv.org/abs/1801.07791) [(official implementation)](https://github.com/yangyanli/PointCNN) (NeurIPS 2018)
+* **[PPFConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.PPFConv)** from Deng *et al.*: [PPFNet: Global Context Aware Local Features for Robust 3D Point Matching](https://arxiv.org/abs/1802.02669) (CVPR 2018)
 * **[GMMConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.GMMConv)** from Monti *et al.*: [Geometric Deep Learning on Graphs and Manifolds using Mixture Model CNNs](https://arxiv.org/abs/1611.08402) (CVPR 2017)
+* **[HypergraphConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.HypergraphConv)** from Bai *et al.*: [Hypergraph Convolution and Hypergraph Attention](https://arxiv.org/abs/1901.08150) (CoRR 2019)
 * A **[MetaLayer](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.meta.MetaLayer)** for building any kind of graph network similar to the [TensorFlow Graph Nets library](https://github.com/deepmind/graph_nets) from Battaglia *et al.*: [Relational Inductive Biases, Deep Learning, and Graph Networks](https://arxiv.org/abs/1806.01261) (CoRR 2018)
 * **[GlobalAttention](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.glob.GlobalAttention)** from Li *et al.*: [Gated Graph Sequence Neural Networks](https://arxiv.org/abs/1511.05493) (ICLR 2016)
 * **[Set2Set](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.glob.Set2Set)** from Vinyals *et al.*: [Order Matters: Sequence to Sequence for Sets](https://arxiv.org/abs/1511.06391) (ICLR 2016)
@@ -160,8 +162,10 @@ In detail, the following methods are currently implemented:
 * **[Voxel Grid Pooling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.voxel_grid)** from, *e.g.*, Simonovsky and Komodakis: [Dynamic Edge-Conditioned Filters in Convolutional Neural Networks on Graphs](https://arxiv.org/abs/1704.02901) (CVPR 2017)
 * **[Top-K Pooling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.TopKPooling)** from Gao and Ji: [Graph U-Net](https://openreview.net/forum?id=HJePRoAct7) (ICLR 2019 submission) and Cangea *et al.*: [Towards Sparse Hierarchical Graph Classifiers](https://arxiv.org/abs/1811.01287) (NeurIPS-W 2018)
 * **[Local Degree Profile](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.transforms.LocalDegreeProfile)** from Cai and Wang: [A Simple yet Effective Baseline for Non-attribute Graph Classification](https://arxiv.org/abs/1811.03508) (CoRR 2018)
+* **[Jumping Knowledge](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.JumpingKnowledge)** from Xu *et al.*: [Representation Learning on Graphs with Jumping Knowledge Networks](https://arxiv.org/abs/1806.03536) (ICML 2018)
+* **[Deep Graph Infomax](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.DeepGraphInfomax)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019)
 * All variants of **[Graph Auto-Encoders](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.GAE)** from Kipf and Welling: [Variational Graph Auto-Encoders](https://arxiv.org/abs/1611.07308) (NIPS-W 2016) and Pan *et al.*: [Adversarially Regularized Graph Autoencoder for Graph Embedding](https://arxiv.org/abs/1802.04407) (IJCAI 2018)
-* Example of **[Deep Graph Infomax on Cora](https://github.com/rusty1s/pytorch_geometric/tree/master/examples/infomax.py)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019)
+* **[RENet](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.RENet)** from Jin *et al.*: [Recurrent Event Network for Reasoning over Temporal Knowledge Graphs](https://arxiv.org/abs/1904.05530) (ICLR-W 2019)
 
 --------------------------------------------------------------------------------
 
@@ -174,11 +178,11 @@ We are constantly encouraged to make PyTorch Geometric even better.
 
 ## Installation
 
-Ensure that at least PyTorch 1.0.0 is installed and verify that `cuda/bin`, `cuda/include` and `cuda/lib64` are in your `$PATH`, `$CPATH` and `$LD_LIBRARY_PATH` respectively, *e.g.*:
+Ensure that at least PyTorch 1.1.0 is installed and verify that `cuda/bin`, `cuda/include` and `cuda/lib64` are in your `$PATH`, `$CPATH` and `$LD_LIBRARY_PATH` respectively, *e.g.*:
 
 ```
 $ python -c "import torch; print(torch.__version__)"
->>> 1.0.0
+>>> 1.1.0
 
 $ echo $PATH
 >>> /usr/local/cuda/bin:...
@@ -213,7 +217,7 @@ See the [Frequently Asked Questions](https://rusty1s.github.io/pytorch_geometric
 
 ```
 cd examples
-python cora.py
+python gcn.py
 ```
 
 ## Cite

@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.1.2)
+                master (1.2.1)
               </div>
             
           
@@ -111,6 +111,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Creating your own datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
 </ul>
@@ -206,9 +207,12 @@
 <li><a href="torch_geometric/datasets/coauthor.html">torch_geometric.datasets.coauthor</a></li>
 <li><a href="torch_geometric/datasets/coma.html">torch_geometric.datasets.coma</a></li>
 <li><a href="torch_geometric/datasets/cora_full.html">torch_geometric.datasets.cora_full</a></li>
+<li><a href="torch_geometric/datasets/dynamic_faust.html">torch_geometric.datasets.dynamic_faust</a></li>
 <li><a href="torch_geometric/datasets/entities.html">torch_geometric.datasets.entities</a></li>
 <li><a href="torch_geometric/datasets/faust.html">torch_geometric.datasets.faust</a></li>
+<li><a href="torch_geometric/datasets/gdelt.html">torch_geometric.datasets.gdelt</a></li>
 <li><a href="torch_geometric/datasets/geometry.html">torch_geometric.datasets.geometry</a></li>
+<li><a href="torch_geometric/datasets/icews.html">torch_geometric.datasets.icews</a></li>
 <li><a href="torch_geometric/datasets/karate.html">torch_geometric.datasets.karate</a></li>
 <li><a href="torch_geometric/datasets/mnist_superpixels.html">torch_geometric.datasets.mnist_superpixels</a></li>
 <li><a href="torch_geometric/datasets/modelnet.html">torch_geometric.datasets.modelnet</a></li>
@@ -218,11 +222,14 @@
 <li><a href="torch_geometric/datasets/qm7.html">torch_geometric.datasets.qm7</a></li>
 <li><a href="torch_geometric/datasets/qm9.html">torch_geometric.datasets.qm9</a></li>
 <li><a href="torch_geometric/datasets/shapenet.html">torch_geometric.datasets.shapenet</a></li>
+<li><a href="torch_geometric/datasets/shrec2016.html">torch_geometric.datasets.shrec2016</a></li>
+<li><a href="torch_geometric/datasets/tosca.html">torch_geometric.datasets.tosca</a></li>
 <li><a href="torch_geometric/datasets/tu_dataset.html">torch_geometric.datasets.tu_dataset</a></li>
 <li><a href="torch_geometric/nn/conv/agnn_conv.html">torch_geometric.nn.conv.agnn_conv</a></li>
 <li><a href="torch_geometric/nn/conv/appnp.html">torch_geometric.nn.conv.appnp</a></li>
 <li><a href="torch_geometric/nn/conv/arma_conv.html">torch_geometric.nn.conv.arma_conv</a></li>
 <li><a href="torch_geometric/nn/conv/cheb_conv.html">torch_geometric.nn.conv.cheb_conv</a></li>
+<li><a href="torch_geometric/nn/conv/dna_conv.html">torch_geometric.nn.conv.dna_conv</a></li>
 <li><a href="torch_geometric/nn/conv/edge_conv.html">torch_geometric.nn.conv.edge_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gat_conv.html">torch_geometric.nn.conv.gat_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gated_graph_conv.html">torch_geometric.nn.conv.gated_graph_conv</a></li>
@@ -230,12 +237,15 @@
 <li><a href="torch_geometric/nn/conv/gin_conv.html">torch_geometric.nn.conv.gin_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gmm_conv.html">torch_geometric.nn.conv.gmm_conv</a></li>
 <li><a href="torch_geometric/nn/conv/graph_conv.html">torch_geometric.nn.conv.graph_conv</a></li>
+<li><a href="torch_geometric/nn/conv/hypergraph_conv.html">torch_geometric.nn.conv.hypergraph_conv</a></li>
 <li><a href="torch_geometric/nn/conv/message_passing.html">torch_geometric.nn.conv.message_passing</a></li>
 <li><a href="torch_geometric/nn/conv/nn_conv.html">torch_geometric.nn.conv.nn_conv</a></li>
 <li><a href="torch_geometric/nn/conv/point_conv.html">torch_geometric.nn.conv.point_conv</a></li>
+<li><a href="torch_geometric/nn/conv/ppf_conv.html">torch_geometric.nn.conv.ppf_conv</a></li>
 <li><a href="torch_geometric/nn/conv/rgcn_conv.html">torch_geometric.nn.conv.rgcn_conv</a></li>
 <li><a href="torch_geometric/nn/conv/sage_conv.html">torch_geometric.nn.conv.sage_conv</a></li>
 <li><a href="torch_geometric/nn/conv/sg_conv.html">torch_geometric.nn.conv.sg_conv</a></li>
+<li><a href="torch_geometric/nn/conv/signed_conv.html">torch_geometric.nn.conv.signed_conv</a></li>
 <li><a href="torch_geometric/nn/conv/spline_conv.html">torch_geometric.nn.conv.spline_conv</a></li>
 <li><a href="torch_geometric/nn/conv/x_conv.html">torch_geometric.nn.conv.x_conv</a></li>
 <li><a href="torch_geometric/nn/data_parallel.html">torch_geometric.nn.data_parallel</a></li>
@@ -247,6 +257,10 @@
 <li><a href="torch_geometric/nn/glob/sort.html">torch_geometric.nn.glob.sort</a></li>
 <li><a href="torch_geometric/nn/meta.html">torch_geometric.nn.meta</a></li>
 <li><a href="torch_geometric/nn/models/autoencoder.html">torch_geometric.nn.models.autoencoder</a></li>
+<li><a href="torch_geometric/nn/models/deep_graph_infomax.html">torch_geometric.nn.models.deep_graph_infomax</a></li>
+<li><a href="torch_geometric/nn/models/jumping_knowledge.html">torch_geometric.nn.models.jumping_knowledge</a></li>
+<li><a href="torch_geometric/nn/models/re_net.html">torch_geometric.nn.models.re_net</a></li>
+<li><a href="torch_geometric/nn/models/signed_gcn.html">torch_geometric.nn.models.signed_gcn</a></li>
 <li><a href="torch_geometric/nn/pool/avg_pool.html">torch_geometric.nn.pool.avg_pool</a></li>
 <li><a href="torch_geometric/nn/pool/graclus.html">torch_geometric.nn.pool.graclus</a></li>
 <li><a href="torch_geometric/nn/pool/max_pool.html">torch_geometric.nn.pool.max_pool</a></li>
@@ -260,6 +274,7 @@
 <li><a href="torch_geometric/transforms/constant.html">torch_geometric.transforms.constant</a></li>
 <li><a href="torch_geometric/transforms/distance.html">torch_geometric.transforms.distance</a></li>
 <li><a href="torch_geometric/transforms/face_to_edge.html">torch_geometric.transforms.face_to_edge</a></li>
+<li><a href="torch_geometric/transforms/generate_mesh_normals.html">torch_geometric.transforms.generate_mesh_normals</a></li>
 <li><a href="torch_geometric/transforms/knn_graph.html">torch_geometric.transforms.knn_graph</a></li>
 <li><a href="torch_geometric/transforms/line_graph.html">torch_geometric.transforms.line_graph</a></li>
 <li><a href="torch_geometric/transforms/linear_transformation.html">torch_geometric.transforms.linear_transformation</a></li>
@@ -269,6 +284,7 @@
 <li><a href="torch_geometric/transforms/normalize_rotation.html">torch_geometric.transforms.normalize_rotation</a></li>
 <li><a href="torch_geometric/transforms/normalize_scale.html">torch_geometric.transforms.normalize_scale</a></li>
 <li><a href="torch_geometric/transforms/one_hot_degree.html">torch_geometric.transforms.one_hot_degree</a></li>
+<li><a href="torch_geometric/transforms/point_pair_features.html">torch_geometric.transforms.point_pair_features</a></li>
 <li><a href="torch_geometric/transforms/polar.html">torch_geometric.transforms.polar</a></li>
 <li><a href="torch_geometric/transforms/radius_graph.html">torch_geometric.transforms.radius_graph</a></li>
 <li><a href="torch_geometric/transforms/random_flip.html">torch_geometric.transforms.random_flip</a></li>
@@ -283,6 +299,8 @@
 <li><a href="torch_geometric/transforms/two_hop.html">torch_geometric.transforms.two_hop</a></li>
 <li><a href="torch_geometric/utils/convert.html">torch_geometric.utils.convert</a></li>
 <li><a href="torch_geometric/utils/degree.html">torch_geometric.utils.degree</a></li>
+<li><a href="torch_geometric/utils/dropout.html">torch_geometric.utils.dropout</a></li>
+<li><a href="torch_geometric/utils/geodesic.html">torch_geometric.utils.geodesic</a></li>
 <li><a href="torch_geometric/utils/grid.html">torch_geometric.utils.grid</a></li>
 <li><a href="torch_geometric/utils/isolated.html">torch_geometric.utils.isolated</a></li>
 <li><a href="torch_geometric/utils/loop.html">torch_geometric.utils.loop</a></li>

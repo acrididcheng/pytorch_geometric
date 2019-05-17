@@ -1,5 +1,7 @@
 import torch
 
+EPS = 1e-15
+
 
 def dense_diff_pool(x, adj, s, mask=None):
     r"""Differentiable pooling operator from the `"Hierarchical Graph
@@ -35,7 +37,8 @@ def dense_diff_pool(x, adj, s, mask=None):
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
 
-    :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`)
+    :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
+        :class:`Tensor`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x
@@ -53,8 +56,10 @@ def dense_diff_pool(x, adj, s, mask=None):
     out = torch.matmul(s.transpose(1, 2), x)
     out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
-    reg = adj - torch.matmul(s, s.transpose(1, 2))
-    reg = torch.norm(reg, p=2)
-    reg = reg / adj.numel()
+    link_loss = adj - torch.matmul(s, s.transpose(1, 2))
+    link_loss = torch.norm(link_loss, p=2)
+    link_loss = link_loss / adj.numel()
 
-    return out, out_adj, reg
+    ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
+
+    return out, out_adj, link_loss, ent_loss
